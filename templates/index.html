@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Simulator</title>
+</head>
+<body>
+    <h1>ChatGPT Simulator</h1>
+    <div id="chatbox" style="border: 1px solid black; height: 400px; width: 100%; overflow-y: scroll; padding: 10px;"></div>
+    <br>
+    <input type="text" id="userInput" placeholder="Type your message..." style="width: 100%;">
+    <script>
+        const chatbox = document.getElementById("chatbox");
+        const userInput = document.getElementById("userInput");
+
+        userInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage(userInput.value);
+                userInput.value = "";
+            }
+        });
+
+        async function sendMessage(message) {
+            const data = {user_input: message};
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                addToChatbox("User", message);
+                addToChatbox("Assistant", responseData.response);
+            } else {
+                console.error("Error sending message to server");
+            }
+        }
+
+        function addToChatbox(role, message) {
+            const messageDiv = document.createElement("div");
+            messageDiv.innerHTML = `<b>${role}:</b> ${message}`;
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
