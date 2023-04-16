@@ -5,116 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatGPT Simulator</title>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
-    <style>
-        body, html {
-            font-family:sans-serif;
-            height: 100%;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        h1 {
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-            background-color: #939292;
-            color: white;
-        }
-        #chatbox {
-            flex-grow: 1;
-            overflow-y: scroll;
-            padding: 10px;
-        }
-        #chatinput {
-            padding: 20px;
-            padding-bottom:50px;
-            background-color: #939292;
-        }
-        #chatinput input {
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 1.2em;
-            width:90%;
-        }
-        .user, .assistant {
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            display: flex;
-            align-items: flex-start;
-        }
-        .user .message, .assistant .message {
-            margin-left: 10px;
-        }
-        .message p {
-            margin: 0;
-            padding: 0;
-        }
-        .user {
-            background-color: white;
-        }
-        .assistant {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1>ChatGPT Simulator</h1>
-    <div id="chatbox"></div>
-    <div id="chatinput"><input type="text" id="userInput" placeholder="Type your message..."></div>
+    <div id="chatbox">
+        <div id="thinking" style="display: none;"><span>🤖</span><div class="message">ChatGPT is thinking...</div></div>
+    </div>
+    <div id="chatinput">
+        <textarea id="userInput" placeholder="Type your message..."></textarea>
+    </div>
     <script src="//cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
-    <script>
-        const chatbox = document.getElementById("chatbox");
-        const userInput = document.getElementById("userInput");
-
-        // Initialize marked.js and highlight.js
-        marked.setOptions({
-            highlight: function(code, language) {
-                if (language && hljs.getLanguage(language)) {
-                    return hljs.highlight(code, { language }).value;
-                }
-                return hljs.highlightAuto(code).value;
-            },
-            breaks: true,
-        });
-
-        userInput.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                sendMessage(userInput.value);
-                userInput.value = "";
-            }
-        });
-
-        async function sendMessage(message) {
-            const data = {user_input: message};
-            addToChatbox("User", message);
-            const response = await fetch("/chat", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                const responseData = await response.json();
-                addToChatbox("Assistant", responseData.response);
-            } else {
-                console.error("Error sending message to server");
-            }
-        }
-
-        function addToChatbox(role, message) {
-            const emoji = role === "User" ? "👤" : "🤖";
-            const messageDiv = document.createElement("div");
-            messageDiv.classList.add(role.toLowerCase());
-            messageDiv.innerHTML = `<span>${emoji}</span><div class="message">${marked.parse(message)}</div>`;
-            chatbox.appendChild(messageDiv);
-            chatbox.scrollTop = chatbox.scrollHeight;
-        }
-    </script>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 </body>
 </html>

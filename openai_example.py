@@ -19,6 +19,6 @@ def chat_gpt(conversation_history):
     return message
 
 
-#chatbot = CLIChatMaker(chat_gpt)
-chatbot = WebChatMaker(chat_gpt)
+chatbot = CLIChatMaker(chat_gpt)
+#chatbot = WebChatMaker(chat_gpt)
 chatbot.run()
