@@ -1,10 +1,12 @@
 import openai
 import os
-from chatmaker import CLIChatMaker, WebChatMaker
+from chatmaker import chatbot
 
 # Initialize the API client
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
+
+@chatbot("web")
 def chat_gpt(conversation_history):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -17,8 +19,3 @@ def chat_gpt(conversation_history):
 
     message = response.choices[0].message["content"].strip()
     return message
-
-
-chatbot = CLIChatMaker(chat_gpt)
-#chatbot = WebChatMaker(chat_gpt)
-chatbot.run()

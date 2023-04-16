@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from rich.console import Console
 from rich.markdown import Markdown
+from functools import wraps
 
 class BaseChatMaker():
     def __init__(self, chat_function):
@@ -57,3 +58,15 @@ class WebChatMaker(BaseChatMaker):
         self.app.add_url_rule('/chat', view_func=self.interact, methods=['POST'])
 
         self.app.run(debug=True)
+
+
+
+def chatbot(type):
+    def decorator(chat_function):
+        if type == "cli":
+            return CLIChatMaker(chat_function).run()
+        elif type == "web":
+            return WebChatMaker(chat_function).run()
+        else:
+            raise ValueError("Invalid chatmaker type.")
+    return decorator
